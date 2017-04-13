@@ -125,20 +125,26 @@ function  domethod($json3,$stationaccount,$pdasn)
 	{	$res="ok";
 	    $db4=conn4();		
 		$yundan=split(",",$diandanstr);
-		$len=count($yundan)/11-1;   //7为pda运单表的有效字段数
+		$len=count($yundan)/15-1;   //7为pda运单表的有效字段数
 		for($i=0;$i<$len;$i++)
 		{
-		   $expressno=$yundan[$i*11+0];
-		   $expressname=$yundan[$i*11+1];
-		   $phonenumber=$yundan[$i*11+2];   
-		   $daofuprice=$yundan[$i*11+3];
-		   $daifuprice=$yundan[$i*11+4];
-		   $diandantime=$yundan[$i*11+5];
-		   $diandanuser=$yundan[$i*11+6];
-		   $homenumber=$yundan[$i*11+7];
-		   $homename=$yundan[$i*11+8];
-		   $homeway=$yundan[$i*11+9];
-		   $reason=$yundan[$i*11+10];		   
+		   $expressno=$yundan[$i*15+0];
+		   $expressname=$yundan[$i*15+1];
+		   $phonenumber=$yundan[$i*15+2];   
+		   $daofuprice=$yundan[$i*15+3];
+		   $daifuprice=$yundan[$i*15+4];
+		   $diandantime=$yundan[$i*15+5];
+		   $diandanuser=$yundan[$i*15+6];
+		   $homenumber=$yundan[$i*15+7];
+		   $homename=$yundan[$i*15+8];
+		   $homeway=$yundan[$i*15+9];
+		   $reason=$yundan[$i*15+10];
+
+		   // 添加快递员姓名、手机号、品名、选择快递公司备注
+		   $kdy_tel = $yundan[$i*15+11];		   
+		   $kdy_name = $yundan[$i*15+12];		   
+		   $product_name = $yundan[$i*15+13];		   
+		   $expressname_remark = $yundan[$i*15+14];		   
 		   		   
 		   $expresstype="0";
 		   //判断该运单是否存在,并判断外派是否存在waipaiuser,如果外派不为空，
@@ -146,8 +152,9 @@ function  domethod($json3,$stationaccount,$pdasn)
 		   $num= mysql_numrows ($result);
 		   if($num==0)
 		   {
-		        $sqlstr="INSERT INTO `logistics` (`pdasn`, `stationaccount`,`expressno`,`expressname`,`phonenumber`,`expresstype`,`daofuprice`,`daifuprice`,`diandantime`,`diandanuser`,`homenumber`,`homename`,`homeway`,`reason`,`uplglflg`,`phase`) 
-VALUES ('$pdasn','$stationaccount', '$expressno', '$expressname','$phonenumber', '$expresstype', '$daofuprice', '$daifuprice', '$diandantime', '$diandanuser', '$homenumber', '$homename', '$homeway', '$reason','1','0')";								  								                mysql_query($sqlstr,$db4);  
+		        $sqlstr="INSERT INTO `logistics` (`pdasn`, `stationaccount`,`expressno`,`expressname`,`phonenumber`,`expresstype`,`daofuprice`,`daifuprice`,`diandantime`,`diandanuser`,`homenumber`,`homename`,`homeway`,`reason`,`uplglflg`,`phase`,`kdy_tel`,`kdy_name`,`product_name`,`expressname_remark`) 
+VALUES ('$pdasn','$stationaccount', '$expressno', '$expressname','$phonenumber', '$expresstype', '$daofuprice', '$daifuprice', '$diandantime', '$diandanuser', '$homenumber', '$homename', '$homeway', '$reason','1','0','$kdy_tel','$kdy_name','$product_name','$expressname_remark')";
+				mysql_query($sqlstr,$db4);  
  		
 		   }
 		   else
@@ -177,11 +184,11 @@ VALUES ('$pdasn','$stationaccount', '$expressno', '$expressname','$phonenumber',
 				$waipaiuser=mysql_result($result,0,"waipaiuser");  //是否已经外派
 				if($waipaiuser!="")
 				{
-				    $sqlstr="UPDATE `logistics` SET  `expressno` = '$expressno',`expressname` = '$expressname',`phonenumber` = '$phonenumber',`expresstype` = '$expresstype',`daofuprice` = '$daofuprice',`daifuprice` = '$daifuprice' ,`homenumber` = '$homenumber',`homename` = '$homename',`homeway` = '$homeway' ,`reason` = '$reason',`diandanuser` = '$username',`phase` = '0', `waipaiuser` = '',`waipaitime` = '0',`waipain` =`waipain`+1,`uplglflg` =`uplglflg`+1  $diandantimestr WHERE `id` ='$id' LIMIT 1";			
+				    $sqlstr="UPDATE `logistics` SET  `expressno` = '$expressno',`expressname` = '$expressname',`phonenumber` = '$phonenumber',`expresstype` = '$expresstype',`daofuprice` = '$daofuprice',`daifuprice` = '$daifuprice' ,`homenumber` = '$homenumber',`homename` = '$homename',`homeway` = '$homeway' ,`reason` = '$reason',`diandanuser` = '$username',`phase` = '0', `waipaiuser` = '',`waipaitime` = '0',`waipain` =`waipain`+1,`uplglflg` =`uplglflg`+1,`kdy_tel`='$kdy_tel',`kdy_name`='$kdy_name',`product_name`='$product_name',`expressname_remark`='$expressname_remark'  $diandantimestr WHERE `id` ='$id' LIMIT 1";			
 				} 
 				else
 				{
-				   $sqlstr="UPDATE `logistics` SET  `expressno` = '$expressno',`expressname` = '$expressname',`phonenumber` = '$phonenumber',`expresstype` = '$expresstype',`daofuprice` = '$daofuprice',`daifuprice` = '$daifuprice' ,`homenumber` = '$homenumber',`homename` = '$homename',`homeway` = '$homeway' ,`reason` = '$reason',`diandanuser` = '$username' ,`phase` = '0' ,`uplglflg` =`uplglflg`+1    $diandantimestr WHERE `id` ='$id' LIMIT 1";
+				   $sqlstr="UPDATE `logistics` SET  `expressno` = '$expressno',`expressname` = '$expressname',`phonenumber` = '$phonenumber',`expresstype` = '$expresstype',`daofuprice` = '$daofuprice',`daifuprice` = '$daifuprice' ,`homenumber` = '$homenumber',`homename` = '$homename',`homeway` = '$homeway' ,`reason` = '$reason',`diandanuser` = '$username' ,`phase` = '0' ,`uplglflg` =`uplglflg`+1 ,`kdy_tel`='$kdy_tel',`kdy_name`='$kdy_name',`product_name`='$product_name',`expressname_remark`='$expressname_remark'   $diandantimestr WHERE `id` ='$id' LIMIT 1";
 				}
 									  							              
 				if($diandantime!="null")  //消除把枪的bug
