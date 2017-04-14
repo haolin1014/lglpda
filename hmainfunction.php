@@ -127,26 +127,27 @@ function  domethod($json3,$stationaccount,$pdasn)
 	{	$res="ok";
 	    $db4=conn4();		
 		$yundan=split(",",$diandanstr);
-		$len=count($yundan)/15-1;   //7为pda运单表的有效字段数
+		$len=count($yundan)/16-1;   //7为pda运单表的有效字段数
 		for($i=0;$i<$len;$i++)
 		{
-		   $expressno=$yundan[$i*15+0];
-		   $expressname=$yundan[$i*15+1];
-		   $phonenumber=$yundan[$i*15+2];   
-		   $daofuprice=$yundan[$i*15+3];
-		   $daifuprice=$yundan[$i*15+4];
-		   $diandantime=$yundan[$i*15+5];
-		   $diandanuser=$yundan[$i*15+6];
-		   $homenumber=$yundan[$i*15+7];
-		   $homename=$yundan[$i*15+8];
-		   $homeway=$yundan[$i*15+9];
-		   $reason=$yundan[$i*15+10];
+		   $expressno=$yundan[$i*16+0];
+		   $expressname=$yundan[$i*16+1];
+		   $phonenumber=$yundan[$i*16+2];   
+		   $daofuprice=$yundan[$i*16+3];
+		   $daifuprice=$yundan[$i*16+4];
+		   $diandantime=$yundan[$i*16+5];
+		   $diandanuser=$yundan[$i*16+6];
+		   $homenumber=$yundan[$i*16+7];
+		   $homename=$yundan[$i*16+8];
+		   $homeway=$yundan[$i*16+9];
+		   $reason=$yundan[$i*16+10];
 
 		   // 添加快递员姓名、手机号、品名、选择快递公司备注
-		   $kdy_tel = $yundan[$i*15+11];		   
-		   $kdy_name = $yundan[$i*15+12];		   
-		   $product_name = $yundan[$i*15+13];		   
-		   $expressname_remark = $yundan[$i*15+14];		   
+		   $kdy_tel = $yundan[$i*16+11];		   
+		   $kdy_name = $yundan[$i*16+12];		   
+		   $product_name = $yundan[$i*16+13];
+		   $dd_sign_url = $yundan[$i*16+14]		   
+		   $expressname_remark = $yundan[$i*16+15];		   
 		   		   
 		   $expresstype="0";
 		   //判断该运单是否存在,并判断外派是否存在waipaiuser,如果外派不为空，
@@ -154,8 +155,8 @@ function  domethod($json3,$stationaccount,$pdasn)
 		   $num= mysql_numrows ($result);
 		   if($num==0)
 		   {
-		        $sqlstr="INSERT INTO `logistics` (`pdasn`, `stationaccount`,`expressno`,`expressname`,`phonenumber`,`expresstype`,`daofuprice`,`daifuprice`,`diandantime`,`diandanuser`,`homenumber`,`homename`,`homeway`,`reason`,`uplglflg`,`phase`,`kdy_tel`,`kdy_name`,`product_name`,`expressname_remark`) 
-VALUES ('$pdasn','$stationaccount', '$expressno', '$expressname','$phonenumber', '$expresstype', '$daofuprice', '$daifuprice', '$diandantime', '$diandanuser', '$homenumber', '$homename', '$homeway', '$reason','1','0','$kdy_tel','$kdy_name','$product_name','$expressname_remark')";
+		        $sqlstr="INSERT INTO `logistics` (`pdasn`, `stationaccount`,`expressno`,`expressname`,`phonenumber`,`expresstype`,`daofuprice`,`daifuprice`,`diandantime`,`diandanuser`,`homenumber`,`homename`,`homeway`,`reason`,`uplglflg`,`phase`,`kdy_tel`,`kdy_name`,`product_name`,`dd_sign_url`,`expressname_remark`) 
+VALUES ('$pdasn','$stationaccount', '$expressno', '$expressname','$phonenumber', '$expresstype', '$daofuprice', '$daifuprice', '$diandantime', '$diandanuser', '$homenumber', '$homename', '$homeway', '$reason','1','0','$kdy_tel','$kdy_name','$product_name','$dd_sign_url','$expressname_remark')";
 				mysql_query($sqlstr,$db4);  
  		
 		   }
@@ -190,7 +191,7 @@ VALUES ('$pdasn','$stationaccount', '$expressno', '$expressname','$phonenumber',
 				} 
 				else
 				{
-				   $sqlstr="UPDATE `logistics` SET  `expressno` = '$expressno',`expressname` = '$expressname',`phonenumber` = '$phonenumber',`expresstype` = '$expresstype',`daofuprice` = '$daofuprice',`daifuprice` = '$daifuprice' ,`homenumber` = '$homenumber',`homename` = '$homename',`homeway` = '$homeway' ,`reason` = '$reason',`diandanuser` = '$username' ,`phase` = '0' ,`uplglflg` =`uplglflg`+1 ,`kdy_tel`='$kdy_tel',`kdy_name`='$kdy_name',`product_name`='$product_name',`expressname_remark`='$expressname_remark'   $diandantimestr WHERE `id` ='$id' LIMIT 1";
+				   $sqlstr="UPDATE `logistics` SET  `expressno` = '$expressno',`expressname` = '$expressname',`phonenumber` = '$phonenumber',`expresstype` = '$expresstype',`daofuprice` = '$daofuprice',`daifuprice` = '$daifuprice' ,`homenumber` = '$homenumber',`homename` = '$homename',`homeway` = '$homeway' ,`reason` = '$reason',`diandanuser` = '$username' ,`phase` = '0' ,`uplglflg` =`uplglflg`+1 ,`kdy_tel`='$kdy_tel',`kdy_name`='$kdy_name',`product_name`='$product_name',`dd_sign_url`='$dd_sign_url',`expressname_remark`='$expressname_remark'   $diandantimestr WHERE `id` ='$id' LIMIT 1";
 				}
 									  							              
 				if($diandantime!="null")  //消除把枪的bug
@@ -369,8 +370,8 @@ function  shujutongbu($username,$stationaccount)
    $str=array();
    for($i=0;$i<$num;$i++)
    {       
-  	 $str[$i*12+0]= urlencode(mysql_result($result,$i,"expressno"))."pxp";
-	 $str[$i*12+1]= urlencode(mysql_result($result,$i,"phonenumber"))."pxp";	
+  	 $str[$i*13+0]= urlencode(mysql_result($result,$i,"expressno"))."pxp";
+	 $str[$i*13+1]= urlencode(mysql_result($result,$i,"phonenumber"))."pxp";	
 	 $huohao=urlencode(mysql_result($result,$i,"huohao")); 
      //货号增加柜号
      $pdasn=mysql_result($result,$i,"pdasn");
@@ -382,16 +383,18 @@ function  shujutongbu($username,$stationaccount)
 	    $huohao=mysql_result($result1,0,"stationmark")."-".$huohao;
 	 }
 	 
-	 $str[$i*12+2]=$huohao."pxp";
-	 $str[$i*12+3]=urlencode(mysql_result($result,$i,"distributetime"))."pxp";		 
-	 $str[$i*12+4]=urlencode(mysql_result($result,$i,"distributeuser"))."pxp";		
-	 $str[$i*12+5]=urlencode(mysql_result($result,$i,"homenumber"))."pxp";
-	 $str[$i*12+6]=urlencode(mysql_result($result,$i,"homename"))."pxp";
-	 $str[$i*12+7]=urlencode(mysql_result($result,$i,"homeway"))."pxp"; 	 
-	 $str[$i*12+8]=urlencode(mysql_result($result,$i,"expressname"))."pxp"; 
-	 $str[$i*12+9]=urlencode(mysql_result($result,$i,"reason"))."pxp"; 
-	 $str[$i*12+10]=urlencode(mysql_result($result,$i,"paycontent"))."pxp";
-	 $str[$i*12+11]=urlencode(mysql_result($result,$i,"diandantime"))."pxp"; 
+	 $str[$i*13+2]=$huohao."pxp";
+	 $str[$i*13+3]=urlencode(mysql_result($result,$i,"distributetime"))."pxp";		 
+	 $str[$i*13+4]=urlencode(mysql_result($result,$i,"distributeuser"))."pxp";		
+	 $str[$i*13+5]=urlencode(mysql_result($result,$i,"homenumber"))."pxp";
+	 $str[$i*13+6]=urlencode(mysql_result($result,$i,"homename"))."pxp";
+	 $str[$i*13+7]=urlencode(mysql_result($result,$i,"homeway"))."pxp"; 	 
+	 $str[$i*13+8]=urlencode(mysql_result($result,$i,"expressname"))."pxp"; 
+	 $str[$i*13+9]=urlencode(mysql_result($result,$i,"reason"))."pxp"; 
+	 $str[$i*13+10]=urlencode(mysql_result($result,$i,"paycontent"))."pxp";
+	 $str[$i*13+11]=urlencode(mysql_result($result,$i,"diandantime"))."pxp"; 
+	 // 2017.04.14数据同步添加签单类型
+	 $str[$i*13+12]=urlencode(mysql_result($result,$i,"signingkind"))."pxp"; 
 	  	  	
    }  
     $response5=implode('',$str);
