@@ -72,8 +72,7 @@ function  domethod($json3,$stationaccount,$pdasn)
 	    case  "chaoqitixing":
       	$response=chaoqitixing($json3["username"],$stationaccount,$pdasn,$json3["chaoqitixingstr"]);
 		break;
-		
-		
+			
 		case  "pdapicture":
       	$response=pdapicture($json3["username"],$stationaccount,$pdasn,$json3["picturestr"]);
 		break;	
@@ -81,8 +80,7 @@ function  domethod($json3,$stationaccount,$pdasn)
 		case  "uploadsignurl":
       	$response=uploadsignurl($json3["username"],$stationaccount,$pdasn,$json3["uploadsignurlstr"]);
 		break;	
-		
-		
+				
 		case  "waipai":
       	$response=waipai($json3["username"],$stationaccount,$pdasn,$json3["waipaistr"]);
 		break;			
@@ -93,7 +91,11 @@ function  domethod($json3,$stationaccount,$pdasn)
 		
 		case  "jijianxiangdan":
       	$response=jijianxiangdan($json3["username"],$stationaccount,$pdasn,$json3["jijianxiangdanstr"]);
-		break;		
+		break;	
+
+		case  "tuijian":
+      	$response=tuijian($json3["username"],$stationaccount,$pdasn,$json3["tuijianstr"]);
+		break;
 																																														
 	}
    
@@ -899,8 +901,12 @@ VALUES ('$username',  '$befor_fund',  '$after_fund',  '$end_msm_num',  '1',  '$s
 		   $picstatus=urlencode(mysql_result($result,$i,"picstatus")); 
 		   
 		   $payway=urlencode(mysql_result($result,$i,"payway"));
-		   $paycontent=urlencode(mysql_result($result,$i,"paycontent")); 		 		   		   
-		   		   
+		   $paycontent=urlencode(mysql_result($result,$i,"paycontent")); 
+
+		   $dd_sign_url=urlencode(mysql_result($result,$i,"dd_sign_url")); 	
+		   $qd_sign_url=urlencode(mysql_result($result,$i,"qd_sign_url")); 	
+		   $tj_sign_url=urlencode(mysql_result($result,$i,"tj_sign_url")); 	
+
 		        //货号增加柜号
      		$pdasn=mysql_result($result,$i,"pdasn");
 	 		$pdasn=str_pad($pdasn,12,"0",STR_PAD_LEFT); //对于不足12位的前边补零
@@ -923,7 +929,7 @@ VALUES ('$username',  '$befor_fund',  '$after_fund',  '$end_msm_num',  '1',  '$s
 		   
 		   $direction=urlencode(mysql_result($result,$i,"direction"));
 		   
-			$response=$response.$expressno."pxp".$expressname."pxp".$expresstype."pxp".$daofuprice."pxp".$daifuprice."pxp".$diandantime."pxp".$diandanuser."pxp".$phonenumber."pxp".$bangdingtime."pxp".$bangdinguser."pxp".$distributeway."pxp".$distributetime."pxp".$distributeuser."pxp".$signingtime."pxp".$signinguser."pxp".$huohao."pxp".$smstatus."pxp".$stationname."pxp".$signingkind."pxp".$homenumber."pxp".$homename."pxp".$homeway."pxp".$waipaitime."pxp".$waipaiuser."pxp".$picstatus."pxp".$payway."pxp".$paycontent."pxp".$direction."pxp";		   
+			$response=$response.$expressno."pxp".$expressname."pxp".$expresstype."pxp".$daofuprice."pxp".$daifuprice."pxp".$diandantime."pxp".$diandanuser."pxp".$phonenumber."pxp".$bangdingtime."pxp".$bangdinguser."pxp".$distributeway."pxp".$distributetime."pxp".$distributeuser."pxp".$signingtime."pxp".$signinguser."pxp".$huohao."pxp".$smstatus."pxp".$stationname."pxp".$signingkind."pxp".$homenumber."pxp".$homename."pxp".$homeway."pxp".$waipaitime."pxp".$waipaiuser."pxp".$picstatus."pxp".$payway."pxp".$paycontent."pxp".$direction."pxp".$dd_sign_url."pxp".$qd_sign_url."pxp".$tj_sign_url."pxp";		   
 		
 		}
 
@@ -987,7 +993,7 @@ VALUES ('$username',  '$befor_fund',  '$after_fund',  '$end_msm_num',  '1',  '$s
 		      
 		   $direction=urlencode(mysql_result($result,$i,"direction"));
 		   
-			$response=$response.$expressno."pxp".$expressname."pxp".$expresstype."pxp".$daofuprice."pxp".$daifuprice."pxp".$diandantime."pxp".$diandanuser."pxp".$phonenumber."pxp".$bangdingtime."pxp".$bangdinguser."pxp".$distributeway."pxp".$distributetime."pxp".$distributeuser."pxp".$signingtime."pxp".$signinguser."pxp".$huohao."pxp".$smstatus."pxp".$stationname."pxp".$signingkind."pxp".$homenumber."pxp".$homename."pxp".$homeway."pxp".$waipaitime."pxp".$waipaiuser."pxp".$picstatus."pxp".$payway."pxp".$paycontent."pxp".$direction."pxp";	
+			$response=$response.$expressno."pxp".$expressname."pxp".$expresstype."pxp".$daofuprice."pxp".$daifuprice."pxp".$diandantime."pxp".$diandanuser."pxp".$phonenumber."pxp".$bangdingtime."pxp".$bangdinguser."pxp".$distributeway."pxp".$distributetime."pxp".$distributeuser."pxp".$signingtime."pxp".$signinguser."pxp".$huohao."pxp".$smstatus."pxp".$stationname."pxp".$signingkind."pxp".$homenumber."pxp".$homename."pxp".$homeway."pxp".$waipaitime."pxp".$waipaiuser."pxp".$picstatus."pxp".$payway."pxp".$paycontent."pxp".$direction."pxp".$dd_sign_url."pxp".$qd_sign_url."pxp".$tj_sign_url."pxp";	
 		
 		}
         if($response=="")
@@ -2124,6 +2130,35 @@ function  jijiantongji($username,$stationaccount,$jijiantongjistr)
 
 		return  $response;
 			
+}
+
+// 新增退件流程接口
+function tuijian($username,$stationaccount,$pdasn,$tuijianstr){
+    $db4=conn4();
+    $yundan=split("pxp",$tuijianstr);
+	$len=count($yundan)/3-1;   //6为pda绑定表的有效字段数
+	for($i=0;$i<$len;$i++)
+	{
+	   $expressno=$yundan[$i*3+0];	  
+	   $kdy_tel=$yundan[$i*3+0];	  
+	   $kdy_name=$yundan[$i*3+1];
+
+
+	   //判断该运单是否存在
+	   $result = mysql_query("SELECT id FROM  logistics  where  stationaccount='$stationaccount'  and  expressno='$expressno' limit 1",$db4);  
+	   $num= mysql_numrows ($result);
+	   if($num>0)
+	   { 		  
+	        $id=mysql_result($result,0,"id");
+			
+	        $sqlstr="UPDATE `logistics` SET `kdy_tel` = '$kdy_tel',`kdy_name` = '$kdy_name'  WHERE `id` ='$id' LIMIT 1";								  							              
+			 mysql_query($sqlstr,$db4);  		  	 	
+	   }
+
+	}
+			
+	 $response="ok";
+	return  $response;
 }
 		
 
