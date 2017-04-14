@@ -968,7 +968,9 @@ VALUES ('$username',  '$befor_fund',  '$after_fund',  '$end_msm_num',  '1',  '$s
 		   $payway=urlencode(mysql_result($result,$i,"payway"));
 		   $paycontent=urlencode(mysql_result($result,$i,"paycontent")); 		   		   
 		   
-		   
+		   $dd_sign_url=urlencode(mysql_result($result,$i,"dd_sign_url")); 	
+		   $qd_sign_url=urlencode(mysql_result($result,$i,"qd_sign_url")); 	
+		   $tj_sign_url=urlencode(mysql_result($result,$i,"tj_sign_url")); 
 		   		  
 		   
 		        //货号增加柜号
