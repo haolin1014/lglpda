@@ -327,7 +327,12 @@ function  shujutongbu($username,$stationaccount)
 	 $response11=$response11.urlencode(mysql_result($result,$i,"dakehuname"))."pxp";
 	 $response11=$response11.urlencode(mysql_result($result,$i,"id"))."pxp";
 	 $response11=$response11.urlencode(mysql_result($result,$i,"jianxie"))."pxp";
-	 $response11=$response11.urlencode(mysql_result($result,$i,"address"))."pxp";	 	
+	 $response11=$response11.urlencode(mysql_result($result,$i,"address"))."pxp";
+	 // 2017.04.14大客户新增字段	 	
+	 $response11=$response11.urlencode(mysql_result($result,$i,"store_id"))."pxp";	 	
+	 $response11=$response11.urlencode(mysql_result($result,$i,"build_id"))."pxp";	 	
+	 $response11=$response11.urlencode(mysql_result($result,$i,"floor_id"))."pxp";	 	
+	 $response11=$response11.urlencode(mysql_result($result,$i,"room_id"))."pxp";	 	
    }   
  
    //短信短语
@@ -413,7 +418,7 @@ function  shujutongbu($username,$stationaccount)
 	
 	//获取该站点账号的所有智能柜账号
   // $result = mysql_query("SELECT *  FROM  stations_manage  where  account=$stationaccount",$db4); 
-      $result = mysql_query("SELECT *  FROM  stations_manage  where  account  = '$stationaccount'",$db4); // account='$stationaccount'  
+   $result = mysql_query("SELECT *  FROM  stations_manage  where  account  = '$stationaccount'",$db4); // account='$stationaccount'  
    $num= mysql_numrows($result);
    $response4="";
    //$response4=urlencode(mysql_result($result,0,"allbox"));
@@ -493,10 +498,31 @@ function  shujutongbu($username,$stationaccount)
    }
   
   $response12=$stationaccount."pxp".$stationname."pxp"."0"."pxp";
+
+   //2017.04.14快递员信息
+   $result = mysql_query("SELECT *  FROM  kdy_info   where  stationaccount='$stationaccount' ",$db4);  
+   $num= mysql_numrows($result); 
+   $str=array();
+   for($i=0;$i<$num;$i++){
+	 $str[$i*2+0]=(mysql_result($result,$i,"kdy_tel"))."pxp";
+	 $str[$i*2+1]=(mysql_result($result,$i,"kdy_name"))."pxp";  	 
+   } 
+  $response13=implode('', $str);
+  $response13=$response13."pxp"."0"."pxp";
+
+     //2017.04.14品名信息
+   $result = mysql_query("SELECT *  FROM  product_station   where  stationaccount='$stationaccount' ",$db4);  
+   $num= mysql_numrows($result); 
+   $str=array();
+   for($i=0;$i<$num;$i++){
+	 $str[$i*1+0]=(mysql_result($result,$i,"product_name"))."pxp"; 	 
+   } 
+  $response14=implode('', $str);
+  $response14=$response14."pxp"."0"."pxp";
   
 
       //合成
-   $response=$response1."uxu".$response11."uxu".$response2."uxu".$response3."uxu".$response5."uxu".$response6."uxu".$response7."uxu".$response8."uxu".$response9."uxu".$response10."uxu".$response12."uxu";	
+   $response=$response1."uxu".$response11."uxu".$response2."uxu".$response3."uxu".$response5."uxu".$response6."uxu".$response7."uxu".$response8."uxu".$response9."uxu".$response10."uxu".$response12."uxu".$response13."uxu".$response14."uxu";	
      
    return  $response;
 }
