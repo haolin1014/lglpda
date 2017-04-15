@@ -76,10 +76,6 @@ function  domethod($json3,$stationaccount,$pdasn)
 		case  "pdapicture":
       	$response=pdapicture($json3["username"],$stationaccount,$pdasn,$json3["picturestr"]);
 		break;	
-
-		case  "uploadsignurl":
-      	$response=uploadsignurl($json3["username"],$stationaccount,$pdasn,$json3["uploadsignurlstr"]);
-		break;	
 				
 		case  "waipai":
       	$response=waipai($json3["username"],$stationaccount,$pdasn,$json3["waipaistr"]);
@@ -1913,36 +1909,6 @@ function  jijiantongji($username,$stationaccount,$jijiantongjistr)
 		return  $response;			
 	}
 
-	//----------签名图片地址上传----------------------------------	
-		function  uploadsignurl($username,$stationaccount,$pdasn,$uploadsignurl)
-		{	
-		    $db4=conn4();
-	        $yundan=split("pxp",$uploadsignurl);
-			$len=count($yundan)/3-1;   //6为pda绑定表的有效字段数
-			for($i=0;$i<$len;$i++)
-			{
-			   $expressno=$yundan[$i*3+0];	  
-			   $type=$yundan[$i*3+0];	  
-			   $signurl=$yundan[$i*3+1];
-
-			   $sign_name = $type.'_sign_url';
-
-			   //判断该运单是否存在
-			   $result = mysql_query("SELECT id FROM  logistics  where  stationaccount='$stationaccount'  and  expressno='$expressno' limit 1",$db4);  
-			   $num= mysql_numrows ($result);
-			   if($num>0)
-			   { 		  
-			        $id=mysql_result($result,0,"id");
-					
-			        $sqlstr="UPDATE `logistics` SET `".$sign_name."` = '$signurl'  WHERE `id` ='$id' LIMIT 1";								  							              
-					 mysql_query($sqlstr,$db4);  		  	 	
-			   }
-	
-			}
-					
-			 $response="ok";
-			return  $response;			
-		}
 
 //外派运单  lgl
 	function  waipai($username,$stationaccount,$pdasn,$waipaistr)
