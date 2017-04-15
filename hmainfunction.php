@@ -801,7 +801,9 @@ VALUES ('$username',  '$befor_fund',  '$after_fund',  '$end_msm_num',  '1',  '$s
 		   $direction=$yundan[$i*9+5];
 		   $picstatus=$yundan[$i*9+6];
 		   $payway=$yundan[$i*9+7];
-		   $paycontent=$yundan[$i*9+8];		   		   
+		   $paycontent=$yundan[$i*9+8];	
+		   // 2017.04.15 添加签单签字图片地址
+		   $qd_sign_url = $yundan[$i*9+9];	   		   
 		   
 		   //判断该运单是否存在
 		   $result = mysql_query("SELECT id,phonenumber FROM  logistics  where  stationaccount='$stationaccount'  and  expressno='$expressno' limit 1",$db4);  
@@ -815,7 +817,7 @@ VALUES ('$username',  '$befor_fund',  '$after_fund',  '$end_msm_num',  '1',  '$s
 		 //      if($num==0)
 			   {
 		           //在插入状态，将,'$qiandantime'也同时插入diandantime
-		           $sqlstr="INSERT INTO `logistics` ( `pdasn`,`stationaccount`,`expressno`,`diandantime`,`diandanuser`,`signinguser`,`signingtime`,`signingkind`,`direction`,`expressname`,`picstatus`,`payway`,`paycontent`,`uplglflg`,`phase`) VALUES ('$pdasn','$stationaccount', '$expressno','$qiandantime','$username', '$qiandanuser','$qiandantime','$qiandankind','$direction','$expresscode','$picstatus','$payway','$paycontent','1','2')";							  				
+		           $sqlstr="INSERT INTO `logistics` ( `pdasn`,`stationaccount`,`expressno`,`diandantime`,`diandanuser`,`signinguser`,`signingtime`,`signingkind`,`direction`,`expressname`,`picstatus`,`payway`,`paycontent`,`uplglflg`,`phase`,`qd_sign_url`) VALUES ('$pdasn','$stationaccount', '$expressno','$qiandantime','$username', '$qiandanuser','$qiandantime','$qiandankind','$direction','$expresscode','$picstatus','$payway','$paycontent','1','2','$qd_sign_url')";							  				
 				   mysql_query($sqlstr,$db4); 
 			   }		 	
 		   }
@@ -845,7 +847,7 @@ VALUES ('$username',  '$befor_fund',  '$after_fund',  '$end_msm_num',  '1',  '$s
 				 }
 				 
 
-		        $sqlstr="UPDATE `logistics` SET  `signingtime` = '$qiandantime',`signinguser` = '$qiandanuser',`signingkind` = '$qiandankind',`direction` = '$direction' ,`picstatus` = '$picstatus' ,`payway` = '$payway',`paycontent` = '$paycontent',`phase` = '$phase' ,`uplglflg` =`uplglflg`+1  $expcode  WHERE `id` ='$id' LIMIT 1";								  							              
+		        $sqlstr="UPDATE `logistics` SET  `signingtime` = '$qiandantime',`signinguser` = '$qiandanuser',`signingkind` = '$qiandankind',`direction` = '$direction' ,`picstatus` = '$picstatus' ,`payway` = '$payway',`paycontent` = '$paycontent',`phase` = '$phase' ,`uplglflg` =`uplglflg`+1,`qd_sign_url`='$qd_sign_url'  $expcode  WHERE `id` ='$id' LIMIT 1";								  							              
 				 mysql_query($sqlstr,$db4);  			   
 		   } 
 		   
@@ -1968,14 +1970,14 @@ function  jijiantongji($username,$stationaccount,$jijiantongjistr)
 		   $num= mysql_numrows ($result);
 		   if($num==0)
 		   {
-		        $sqlstr="INSERT INTO `logistics` (`pdasn`, `stationaccount`,`expressno`,`expressname`,`phonenumber`,`waipaiuser`,`waipaitime`,`diandantime`,`diandanuser`,`msm_sn`,`smstatus`,`uplglflg`,`phase`,`paycontent`) 
-                  VALUES ('$pdasn','$stationaccount', '$expressno', '$kuaidicode','$rcvnumber', '$waipaiphonenumber', '$waipaitime','$waipaitime', '$username', '$msm_sn','2','1','1','$dakehu')";							  								                mysql_query($sqlstr,$db4);  
+		        $sqlstr="INSERT INTO `logistics` (`pdasn`, `stationaccount`,`expressno`,`expressname`,`phonenumber`,`waipaiuser`,`waipaitime`,`diandantime`,`diandanuser`,`msm_sn`,`smstatus`,`uplglflg`,`phase`,`paycontent`,`signingkind`) 
+                  VALUES ('$pdasn','$stationaccount', '$expressno', '$kuaidicode','$rcvnumber', '$waipaiphonenumber', '$waipaitime','$waipaitime', '$username', '$msm_sn','2','1','1','$dakehu','6')";							  								                mysql_query($sqlstr,$db4);  
  		
 		   }
 		   else
 		   {
 		        $id=mysql_result($result,0,"id");     		
-		        $sqlstr="UPDATE `logistics` SET  `expressname` = '$kuaidicode',`phonenumber` = '$rcvnumber',`waipaiuser` = '$waipaiphonenumber',`waipaitime` = '$waipaitime',`msm_sn` = '$msm_sn',`smstatus` = '2',`phase` = '1' ,`uplglflg` =`uplglflg`+1 ,`paycontent` = '$dakehu' WHERE `id` ='$id' LIMIT 1";								  							              
+		        $sqlstr="UPDATE `logistics` SET  `expressname` = '$kuaidicode',`phonenumber` = '$rcvnumber',`waipaiuser` = '$waipaiphonenumber',`waipaitime` = '$waipaitime',`msm_sn` = '$msm_sn',`smstatus` = '2',`phase` = '1' ,`uplglflg` =`uplglflg`+1 ,`paycontent` = '$dakehu','signingkind'='6' WHERE `id` ='$id' LIMIT 1";								  							              
 				 mysql_query($sqlstr,$db4);  			   
 		   } 
 		   
@@ -2167,12 +2169,13 @@ function  jijiantongji($username,$stationaccount,$jijiantongjistr)
 function tuijian($username,$stationaccount,$pdasn,$tuijianstr){
     $db4=conn4();
     $yundan=split("pxp",$tuijianstr);
-	$len=count($yundan)/3-1;   //6为pda绑定表的有效字段数
+	$len=count($yundan)/4-1;   //6为pda绑定表的有效字段数
 	for($i=0;$i<$len;$i++)
 	{
-	   $expressno=$yundan[$i*3+0];	  
-	   $kdy_tel=$yundan[$i*3+0];	  
-	   $kdy_name=$yundan[$i*3+1];
+	   $expressno=$yundan[$i*4+0];	  
+	   $kdy_tel=$yundan[$i*4+1];	  
+	   $kdy_name=$yundan[$i*4+2];
+	   $tj_sign_url=$yundan[$i*4+3];
 
 
 	   //判断该运单是否存在
@@ -2182,7 +2185,7 @@ function tuijian($username,$stationaccount,$pdasn,$tuijianstr){
 	   { 		  
 	        $id=mysql_result($result,0,"id");
 			
-	        $sqlstr="UPDATE `logistics` SET `kdy_tel` = '$kdy_tel',`kdy_name` = '$kdy_name'  WHERE `id` ='$id' LIMIT 1";								  							              
+	        $sqlstr="UPDATE `logistics` SET `kdy_tel` = '$kdy_tel',`kdy_name` = '$kdy_name',`tj_sign_url`='$tj_sign_url'  WHERE `id` ='$id' LIMIT 1";								  							              
 			 mysql_query($sqlstr,$db4);  		  	 	
 	   }
 
